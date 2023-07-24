@@ -36,7 +36,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@master
         with:
-          images: ${{ env.REGISTRY }}/ ${{ github.repository }}_raster_${{ inputs.stack }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}_raster_${{ inputs.stack }}
           tags: |
             type=sha
       - name: Build and push
