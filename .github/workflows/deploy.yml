@@ -50,11 +50,34 @@ jobs:
 
   build-stac:
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@main
         with:
           ref: ${{ env.BRANCH_REF }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@master
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@master
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}_stac_${{ inputs.stack }}
+          tags: |
+            type=sha
+      - name: Build and push
+        uses: docker/build-push-action@master
+        with:
+          context: .
+          file: services/stac/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
     needs: [build-raster, build-stac]
@@ -76,13 +99,14 @@ jobs:
           source: deploy/${{ env.STACK }}/stack.yml
           target: eoapi
 
-      # - name: (SSH) Deploy Docker stack
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ env.SWARM_HOSTNAME }}
-      #     username: ${{ env.SWARM_USERNAME }}
-      #     password: ${{ env.SWARM_PASSWORD }}
-      #     port: ${{ env.SWARM_SSH_PORT }}
-      #     script: |
-      #       echo "TODO=nothingyet" > /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
-      #       sudo /opt/deploy-docker-stack.sh /home/runner/eoapi/deploy/${{ env.STACK }}/stack.yml /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env eoapi_${{ env.STACK }}
+      - name: (SSH) Deploy Docker stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SWARM_HOSTNAME }}
+          username: ${{ env.SWARM_USERNAME }}
+          password: ${{ env.SWARM_PASSWORD }}
+          port: ${{ env.SWARM_SSH_PORT }}
+          script: |
+            echo "RASTER_IMAGE=${{ needs.build-raster.outputs.image }}" > /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            echo "STAC_IMAGE=${{ needs.build-stac.outputs.image }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            sudo /opt/deploy-docker-stack.sh /home/runner/eoapi/deploy/${{ env.STACK }}/stack.yml /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env eoapi_${{ env.STACK }}
