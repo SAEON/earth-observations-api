@@ -63,7 +63,7 @@ services:
       # API Config
       - EOAPI_RASTER_ENABLE_MOSAIC_SEARCH=TRUE
     ports:
-      - 7003:8082
+      - 7015:8082
     networks:
       - eoapi_stable
 
@@ -110,7 +110,7 @@ services:
       - DB_MAX_CONN_SIZE=10
       # https://github.com/developmentseed/eoAPI/issues/16
       # - TITILER_ENDPOINT=raster
-      - TITILER_ENDPOINT=http://127.0.0.1:8082
+      - TITILER_ENDPOINT=http://127.0.0.1:7015
     ports:
       - 7014:8081
     networks:
