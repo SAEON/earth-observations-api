@@ -109,4 +109,8 @@ jobs:
           script: |
             echo "RASTER_IMAGE=${{ needs.build-raster.outputs.image }}" > /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
             echo "STAC_IMAGE=${{ needs.build-stac.outputs.image }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            echo "PG_USER=${{ secrets.PG_USER }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            echo "PG_HOST_STABLE=${{ secrets.PG_HOST_STABLE }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
+            echo "PG_PORT_STABLE=${{ secrets.PG_PORT_STABLE }}" >> /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env
             sudo /opt/deploy-docker-stack.sh /home/runner/eoapi/deploy/${{ env.STACK }}/stack.yml /home/runner/eoapi/deploy/${{ env.STACK }}/stack.env eoapi_${{ env.STACK }}
