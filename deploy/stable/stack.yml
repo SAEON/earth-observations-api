@@ -29,7 +29,39 @@ services:
           memory: 1G
     environment:
       - PORT=8082
+      # Application
+      - HOST=0.0.0.0
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#web_concurrency
+      - WEB_CONCURRENCY=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#workers_per_core
       - WORKERS_PER_CORE=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
+      - MAX_WORKERS=10
+      # Postgres connection
+      # Postgres connection
+      - POSTGRES_USER=${{ secrets.PG_USER }}"
+      - POSTGRES_PASS=${{ secrets.PG_PASSWORD }}
+      - POSTGRES_DBNAME=earth_observations_api
+      - POSTGRES_HOST=${{ secrets.PG_HOST_STABLE }}
+      - POSTGRES_PORT=${{ secrets.PG_PORT_STABLE }}
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=10
+      # - DB_MAX_QUERIES=10
+      # - DB_MAX_IDLE=10
+      # GDAL Config
+      - CPL_TMPDIR=/tmp
+      - GDAL_CACHEMAX=75%
+      - GDAL_INGESTED_BYTES_AT_OPEN=32768
+      - GDAL_DISABLE_READDIR_ON_OPEN=EMPTY_DIR
+      - GDAL_HTTP_MERGE_CONSECUTIVE_RANGES=YES
+      - GDAL_HTTP_MULTIPLEX=YES
+      - GDAL_HTTP_VERSION=2
+      - VSI_CACHE=TRUE
+      - VSI_CACHE_SIZE=536870912
+      # TiTiler Config
+      - MOSAIC_CONCURRENCY=1
+      # API Config
+      - EOAPI_RASTER_ENABLE_MOSAIC_SEARCH=TRUE
     ports:
       - 7003:8082
     networks:
@@ -56,8 +88,29 @@ services:
           cpus: "1"
           memory: 1G
     environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8081
+      - HOST=0.0.0.0
       - PORT=8081
+      - ENVIRONMENT=local
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#web_concurrency
+      - WEB_CONCURRENCY=10
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#workers_per_core
       - WORKERS_PER_CORE=1
+      # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
+      # - MAX_WORKERS=10
+      # Postgres connection
+      - POSTGRES_USER=${{ secrets.PG_USER }}"
+      - POSTGRES_PASS=${{ secrets.PG_PASSWORD }}
+      - POSTGRES_DBNAME=earth_observations_api
+      - POSTGRES_HOST_READER=${{ secrets.PG_HOST_STABLE }}
+      - POSTGRES_HOST_WRITER=${{ secrets.PG_HOST_STABLE }}
+      - POSTGRES_PORT=${{ secrets.PG_PORT_STABLE }}
+      - DB_MIN_CONN_SIZE=1
+      - DB_MAX_CONN_SIZE=10
+      # https://github.com/developmentseed/eoAPI/issues/16
+      # - TITILER_ENDPOINT=raster
+      - TITILER_ENDPOINT=http://127.0.0.1:8082
     ports:
       - 7014:8081
     networks:
