@@ -28,9 +28,37 @@ services:
           cpus: "1"
           memory: 1G
     environment:
-      - PORT=8000
+      - PORT=8082
       - WORKERS_PER_CORE=1
     ports:
-      - 7003:8000
+      - 7003:8082
+    networks:
+      - eoapi_stable
+
+  stac:
+    image: $STAC_IMAGE
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.apps == true
+      rollback_config:
+        parallelism: 0
+      update_config:
+        parallelism: 0
+        order: stop-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 30s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+    environment:
+      - PORT=8081
+      - WORKERS_PER_CORE=1
+    ports:
+      - 7014:8081
     networks:
       - eoapi_stable
