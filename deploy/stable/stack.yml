@@ -39,11 +39,11 @@ services:
       - MAX_WORKERS=10
       # Postgres connection
       # Postgres connection
-      - POSTGRES_USER=${{ secrets.PG_USER }}"
-      - POSTGRES_PASS=${{ secrets.PG_PASSWORD }}
+      - POSTGRES_USER=$PG_USER
+      - POSTGRES_PASS=$PG_PASSWORD
       - POSTGRES_DBNAME=earth_observations_api
-      - POSTGRES_HOST=${{ secrets.PG_HOST_STABLE }}
-      - POSTGRES_PORT=${{ secrets.PG_PORT_STABLE }}
+      - POSTGRES_HOST=$PG_HOST_STABLE
+      - POSTGRES_PORT=$PG_PORT_STABLE
       - DB_MIN_CONN_SIZE=1
       - DB_MAX_CONN_SIZE=10
       # - DB_MAX_QUERIES=10
@@ -100,12 +100,12 @@ services:
       # https://github.com/tiangolo/uvicorn-gunicorn-docker#max_workers
       # - MAX_WORKERS=10
       # Postgres connection
-      - POSTGRES_USER=${{ secrets.PG_USER }}"
-      - POSTGRES_PASS=${{ secrets.PG_PASSWORD }}
+      - POSTGRES_USER=$PG_USER
+      - POSTGRES_PASS=$PG_PASSWORD
       - POSTGRES_DBNAME=earth_observations_api
-      - POSTGRES_HOST_READER=${{ secrets.PG_HOST_STABLE }}
-      - POSTGRES_HOST_WRITER=${{ secrets.PG_HOST_STABLE }}
-      - POSTGRES_PORT=${{ secrets.PG_PORT_STABLE }}
+      - POSTGRES_HOST_READER=$PG_HOST_STABLE
+      - POSTGRES_HOST_WRITER=$PG_HOST_STABLE
+      - POSTGRES_PORT=$PG_PORT_STABLE
       - DB_MIN_CONN_SIZE=1
       - DB_MAX_CONN_SIZE=10
       # https://github.com/developmentseed/eoAPI/issues/16
